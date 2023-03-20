@@ -10,11 +10,11 @@
 
 class WallsSensorImpl : public WallsSensor {
 private:
-  std::shared_ptr<House> house_;
-  std::shared_ptr<RobotState> robot_;
+  const House *house_;
+  const RobotState *robot_;
 
 public:
   WallsSensorImpl();
-  WallsSensorImpl(std::shared_ptr<House>, std::shared_ptr<RobotState>);
+  WallsSensorImpl(const House &house, const RobotState &robot);
   bool isWall(Direction d) const override;
 };

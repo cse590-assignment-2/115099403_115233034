@@ -8,11 +8,10 @@
 
 class DirtSensorImpl : public DirtSensor {
 private:
-  std::shared_ptr<House> house_;
-  std::shared_ptr<RobotState> robot_;
+  const House *house_;
+  const RobotState *robot_;
 
 public:
-  DirtSensorImpl(std::shared_ptr<House> house,
-                 std::shared_ptr<RobotState> robot);
+  DirtSensorImpl(const House &house, const RobotState &robot);
   int dirtLevel() const override;
 };

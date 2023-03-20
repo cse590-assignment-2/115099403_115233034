@@ -25,12 +25,14 @@ private:
   std::unique_ptr<WallsSensorImpl> walls_sensor;
   std::unique_ptr<BatteryMeterImpl> battery_meter;
 
-  // DirtSensor *dirt_sensor;
-  // WallsSensor *wall_sensor;
-  // BatteryMeter *battery_meter;
+  DirtSensorImpl dirt_sensor_;
+  WallsSensorImpl wall_sensor_;
+  BatteryMeterImpl battery_meter_;
 
   std::size_t max_steps_;
+  House houseState_;
   std::shared_ptr<House> house_;
+  RobotState robotState_;
   std::shared_ptr<RobotState> robot_;
   int initSensors();
 

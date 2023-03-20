@@ -1,26 +1,17 @@
 #include "Simulator.h"
 
-Simulator::Simulator() {
-  house_ = std::make_shared<House>();
-  robot_ = std::make_shared<RobotState>();
-
-  dirt_sensor = std::make_unique<DirtSensorImpl>(house_, robot_);
-  walls_sensor = std::make_unique<WallsSensorImpl>(house_, robot_);
-  battery_meter = std::make_unique<BatteryMeterImpl>(robot_);
-}
+Simulator::Simulator()
+    : dirt_sensor_(houseState_, robotState_),
+      wall_sensor_(houseState_, robotState_), battery_meter_(robotState_) {}
 
 void Simulator::setAlgorithm(AbstractAlgorithm &algorithm) {
 
-  // if (walls_sensor || dirt_sensor || battery_meter) {
-  //   std::cout << "ERROR!! SETTING ALGORITHM BEFORE SENSORS INITIALIZATION"
-  //             << std::endl;
-  // }
   algo = &algorithm;
   algo->setMaxSteps(max_steps_);
 
-  algo->setDirtSensor(*dirt_sensor);
-  algo->setWallsSensor(*walls_sensor);
-  algo->setBatteryMeter(*battery_meter);
+  algo->setDirtSensor(dirt_sensor_);
+  algo->setWallsSensor(wall_sensor_);
+  algo->setBatteryMeter(battery_meter_);
 }
 
 int Simulator::readHouseFile(const std::string &houseFilePath) {
@@ -87,11 +78,11 @@ int Simulator::readHouseFile(const std::string &houseFilePath) {
     row_number++;
   }
 
-  house_->init(data);
-  robot_->init(max_robot_battery_, house_->getDockPos());
+  houseState_.init(data);
+  robotState_.init(max_robot_battery_, houseState_.getDockPos());
   std::cout << "Robot: max_robot_battery:" << max_robot_battery_ << std::endl;
   std::cout << "House:\n";
-  std::cout << *house_;
+  std::cout << houseState_;
 
   return 1;
 }

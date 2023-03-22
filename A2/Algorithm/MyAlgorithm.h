@@ -2,6 +2,7 @@
 
 #include "../Common/AbstractAlgorithm.h"
 #include "../Simulation/DirtSensorImpl.h"
+#include "HouseManager.h"
 #include "types.h"
 
 #include <map>
@@ -19,23 +20,25 @@ private:
   const DirtSensor *dirt_sensor_ = nullptr;
   const BatteryMeter *battery_meter_ = nullptr;
 
+  HouseManager house_manager_;
+
   // point to dirt
-  std::map<std::pair<int, int>, int> percieved_house_;
-  std::map<std::pair<int, int>, bool> unexplored_points_;
+  // std::map<std::pair<int, int>, int> percieved_house_;
+  // std::map<std::pair<int, int>, bool> unexplored_points_;
   std::stack<Direction> stack_;
 
   // methods
   void updateNeighbors();
-  void updateNeighbor(Direction dir);
+  // void updateNeighbor(Direction dir);
   bool needCharge();
-  void cleanCurrent();
+  // void cleanCurrent();
   Step work();
 
-  std::stack<Direction> getShortestPath(std::pair<int, int> src,
-                                        std::pair<int, int> dst,
-                                        bool search = false);
+  // std::stack<Direction> getShortestPath(std::pair<int, int> src,
+  //                                       std::pair<int, int> dst,
+  //                                       bool search = false);
 
-  std::vector<std::pair<int, int>> neighbors(std::pair<int, int> point);
+  // std::vector<std::pair<int, int>> neighbors(std::pair<int, int> point);
 
 public:
   MyAlgorithm();

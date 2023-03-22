@@ -24,6 +24,9 @@ set(SIM_INCLUDES
 
 set(ALGO_INCLUDES
     ${PROJECT_SOURCE_DIR}/Algorithm/MyAlgorithm.h
+    ${PROJECT_SOURCE_DIR}/Algorithm/types.h
+    ${PROJECT_SOURCE_DIR}/Algorithm/Utils.h
+    ${PROJECT_SOURCE_DIR}/Algorithm/HouseManager.h
     )
 
 add_library(sim SHARED 
@@ -39,6 +42,8 @@ target_include_directories(sim PUBLIC ${COMMON_INCLUDES} ${SIM_INCLUDES})
 
 add_executable( ${PROJECT_NAME} main.cpp 
     ${PROJECT_SOURCE_DIR}/Algorithm/MyAlgorithm.cpp
+    ${PROJECT_SOURCE_DIR}/Algorithm/HouseManager.cpp
+    ${PROJECT_SOURCE_DIR}/Algorithm/Utils.cpp
     )
 target_include_directories( ${PROJECT_NAME} 
     PUBLIC ${COMMON_INCLUDES} ${SIM_INCLUDES} ${ALGO_INCLUDES})

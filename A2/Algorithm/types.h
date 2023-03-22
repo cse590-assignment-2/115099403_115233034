@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#define Pos std::pair<int, int>
+
 enum class AlgoState {
   CHARGING,
   TO_DOCK,

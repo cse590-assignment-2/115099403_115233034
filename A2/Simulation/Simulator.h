@@ -11,27 +11,22 @@
 #include "RobotState.h"
 #include "Utils.h"
 #include "WallsSensorImpl.h"
+
 #include <fstream>
 #include <iostream>
 
-class Simulator { // : public WallsSensor, public DirtSensor, public
-                  // BatteryMeter {
+class Simulator {
 private:
-  // cannot directly instanciate abstract algorithm, so using smart pointers
-  // std::unique_ptr<MyAlgorithm> algo;
+  std::size_t max_steps_;
+  House houseState_;
+  RobotState robotState_;
+
   AbstractAlgorithm *algo;
-
-  // std::unique_ptr<DirtSensorImpl> dirt_sensor;
-  // std::unique_ptr<WallsSensorImpl> walls_sensor;
-  // std::unique_ptr<BatteryMeterImpl> battery_meter;
-
+  // sensors
   DirtSensorImpl dirt_sensor_;
   WallsSensorImpl wall_sensor_;
   BatteryMeterImpl battery_meter_;
 
-  std::size_t max_steps_;
-  House houseState_;
-  RobotState robotState_;
   int initSensors();
 
 public:
@@ -39,8 +34,4 @@ public:
   int readHouseFile(const std::string &house_file_path);
   void setAlgorithm(AbstractAlgorithm &algorithm);
   void run();
-
-  // bool isWall(Direction d) const override { return false; }
-  // int dirtLevel() const override { return 0; }
-  // std::size_t getBatteryState() const override { return 0; }
 };

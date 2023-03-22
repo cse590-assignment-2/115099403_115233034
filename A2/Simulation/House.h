@@ -1,9 +1,12 @@
 #pragma once
+
 #include "../Common/common_types.h"
 #include "Utils.h"
+
 #include <ostream>
 #include <string>
 #include <vector>
+
 class House {
 private:
   std::vector<std::vector<int>> data_;

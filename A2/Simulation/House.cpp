@@ -8,13 +8,13 @@ void House::init(std::vector<std::vector<int>> &data) {
 
   // Pad with wall
   for (int i = 0; i < data_[0].size(); i++) {
-    data_[0][i] = -1;
-    data_[data_.size() - 1][i] = -1;
+    data_[0][i] = int(LocType::Wall);
+    data_[data_.size() - 1][i] = int(LocType::Wall);
   }
 
   for (int i = 0; i < data_.size(); i++) {
-    data_[i][0] = -1;
-    data_[i][data_[0].size() - 1] = -1;
+    data_[i][0] = int(LocType::Wall);
+    data_[i][data_[0].size() - 1] = int(LocType::Wall);
   }
 
   for (int i = 0; i < data.size(); i++) {
@@ -32,11 +32,13 @@ void House::init(std::vector<std::vector<int>> &data) {
 Position House::getDockPos() const { return dock_pos_; }
 
 int House::dirtLevel(const Position &position) const {
-  return data_[position.r][position.c];
+  return data_[position.r][position.c] == int(LocType::Dock)
+             ? -1
+             : data_[position.r][position.c];
 }
 
 bool House::isWall(const Position &position) const {
-  return data_[position.r][position.c] == -1;
+  return data_[position.r][position.c] == int(LocType::Wall);
 }
 
 std::ostream &operator<<(std::ostream &out, const House &house) {

@@ -1,20 +1,41 @@
-//
-// Created by Anshuman Funkwal on 3/13/23.
-//
-
 #pragma once
 
 #include "../Common/AbstractAlgorithm.h"
 #include "../Simulation/DirtSensorImpl.h"
-#include <iostream>
-#include <memory>
-class MyAlgorithm : public AbstractAlgorithm {
-  std::size_t maxSteps;
-  const WallsSensor *walls_sensor_ = nullptr;
+#include "types.h"
 
-  // std::shared_ptr<DirtSensorImpl> ds_;
+#include <map>
+#include <memory>
+#include <stack>
+
+class MyAlgorithm : public AbstractAlgorithm {
+private:
+  std::size_t max_steps_;
+  AlgoState state_;
+  std::size_t max_battery_;
+  std::pair<int, int> current_position_;
+
+  const WallsSensor *walls_sensor_ = nullptr;
   const DirtSensor *dirt_sensor_ = nullptr;
   const BatteryMeter *battery_meter_ = nullptr;
+
+  // point to dirt
+  std::map<std::pair<int, int>, int> percieved_house_;
+  std::map<std::pair<int, int>, bool> unexplored_points_;
+  std::stack<Direction> stack_;
+
+  // methods
+  void updateNeighbors();
+  void updateNeighbor(Direction dir);
+  bool needCharge();
+  void cleanCurrent();
+  Step work();
+
+  std::stack<Direction> getShortestPath(std::pair<int, int> src,
+                                        std::pair<int, int> dst,
+                                        bool search = false);
+
+  std::vector<std::pair<int, int>> neighbors(std::pair<int, int> point);
 
 public:
   MyAlgorithm();

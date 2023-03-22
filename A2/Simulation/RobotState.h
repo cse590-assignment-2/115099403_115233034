@@ -2,6 +2,7 @@
 
 #include "../Common/common_types.h"
 #include "Utils.h"
+
 #include <algorithm>
 
 class RobotState {

@@ -4,6 +4,7 @@
 #include "../Common/common_types.h"
 #include "House.h"
 #include "RobotState.h"
+
 #include <memory>
 
 class DirtSensorImpl : public DirtSensor {

@@ -1,7 +1,7 @@
 #include "Simulator.h"
 
 Simulator::Simulator()
-    : dirt_sensor_(houseState_, robotState_),
+    : robotState_(), dirt_sensor_(houseState_, robotState_),
       wall_sensor_(houseState_, robotState_), battery_meter_(robotState_) {}
 
 void Simulator::setAlgorithm(AbstractAlgorithm &algorithm) {

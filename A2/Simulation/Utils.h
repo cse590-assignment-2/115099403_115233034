@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Common/common_types.h"
+
 #include <iostream>
 #include <string>
 
@@ -13,6 +14,7 @@ public:
   static double parseDouble(std::string input);
   size_t readAEqb(std::string input, std::string varname);
 };
+
 struct Position {
   int r, c;
   Position next(const Direction &d) {
@@ -32,4 +34,5 @@ struct Position {
 };
 
 std::ostream &operator<<(std::ostream &out, const Position &pos);
+
 Direction reverse(const Direction &d);

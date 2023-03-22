@@ -4,12 +4,10 @@
 
 // getting command line arguments for the house file
 int main(int argc, char **argv) {
-
-  Simulator sim;
+  Simulator simulator;
   //  TODO: Handle empty command line args etc.
-  sim.readHouseFile(argv[1]);
+  simulator.readHouseFile(argv[1]);
   MyAlgorithm algo;
-  sim.setAlgorithm(algo);
-
-  sim.run();
+  simulator.setAlgorithm(algo);
+  simulator.run();
 }

@@ -96,8 +96,14 @@ void Simulator::run() {
     if (currentStep == Step::Finish)
       break;
     else {
-      houseState_.clean(robotState_.getPosition());
       robotState_.step(currentStep);
+      if (houseState_.isWall(robotState_.getPosition())) {
+        if (currentStep != Step::Stay)
+          robotState_.step(reverse(currentStep));
+        std::cout << "Running into a wall : unexpected operation";
+      } else {
+        houseState_.clean(robotState_.getPosition());
+      }
     }
     steps++;
     std::cout << currentStep << std::endl;

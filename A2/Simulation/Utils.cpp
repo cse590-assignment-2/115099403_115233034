@@ -55,6 +55,21 @@ Direction reverse(Direction d) {
   }
 }
 
+Step reverse(Step s) {
+  switch (s) {
+  case Step::North:
+    return Step::South;
+  case Step::South:
+    return Step::North;
+  case Step::West:
+    return Step::East;
+  case Step::East:
+    return Step::West;
+  default:
+    return Step::Stay;
+  }
+}
+
 std::ostream &operator<<(std::ostream &out, const Step &step) {
   std::string outString = "";
   switch (step) {

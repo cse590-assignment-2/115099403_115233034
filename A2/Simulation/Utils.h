@@ -37,3 +37,4 @@ std::ostream &operator<<(std::ostream &out, const Position &pos);
 std::ostream &operator<<(std::ostream &out, const Step &step);
 
 Direction reverse(const Direction &d);
+Step reverse(Step s);

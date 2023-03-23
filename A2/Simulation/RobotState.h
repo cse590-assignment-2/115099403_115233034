@@ -18,7 +18,7 @@ public:
   void init(double battery, Position position);
   double maxBattery() const;
   double battery() const;
-  void step();
+  void step(Step stepDiretion);
   void charge();
 
   Position getPosition() const;

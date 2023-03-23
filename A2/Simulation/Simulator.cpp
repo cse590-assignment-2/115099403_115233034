@@ -106,6 +106,6 @@ void Simulator::run() {
       }
     }
     steps++;
-    std::cout << currentStep << std::endl;
+    std::cout << currentStep << " " << houseState_.totDirt() << std::endl;
   }
 }

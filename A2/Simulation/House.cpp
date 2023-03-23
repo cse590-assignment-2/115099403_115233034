@@ -5,8 +5,10 @@ int House::clean(const Position &position) {
   int &dirt = data_[position.r][position.c];
   if (dirt == static_cast<int>(LocType::Wall))
     return -1;
-  if (dirt > 0)
+  if (dirt > 0) {
+    total_dirt_--;
     dirt--;
+  }
   return 1;
 }
 void House::init(std::vector<std::vector<int>> &data) {
@@ -32,6 +34,8 @@ void House::init(std::vector<std::vector<int>> &data) {
         dock_pos_ = {i + 1, j + 1};
         data_[i + 1][j + 1] = 0;
       } else {
+        if (data[i][j] > 0)
+          total_dirt_ += data[i][j];
         data_[i + 1][j + 1] = data[i][j];
       }
     }
@@ -39,7 +43,7 @@ void House::init(std::vector<std::vector<int>> &data) {
 }
 
 Position House::getDockPos() const { return dock_pos_; }
-
+double House::totDirt() const { return total_dirt_; }
 int House::dirtLevel(const Position &position) const {
   return data_[position.r][position.c] == int(LocType::Dock)
              ? -1

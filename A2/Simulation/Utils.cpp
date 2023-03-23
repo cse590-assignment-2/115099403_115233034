@@ -54,3 +54,29 @@ Direction reverse(Direction d) {
     return Direction::West;
   }
 }
+
+std::ostream &operator<<(std::ostream &out, const Step &step) {
+  std::string outString = "";
+  switch (step) {
+  case Step::North:
+    outString = "North";
+    break;
+  case Step::South:
+    outString = "South";
+    break;
+  case Step::East:
+    outString = "East";
+    break;
+  case Step::West:
+    outString = "West";
+    break;
+  case Step::Stay:
+    outString = "Stay";
+    break;
+  case Step::Finish:
+    outString = "Finish";
+    break;
+  }
+  out << outString;
+  return out;
+}

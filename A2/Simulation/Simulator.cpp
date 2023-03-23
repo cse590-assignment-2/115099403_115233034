@@ -95,11 +95,11 @@ void Simulator::run() {
     Step currentStep = algo->nextStep();
     if (currentStep == Step::Finish)
       break;
-    else if (currentStep == Step::Stay) {
+    else {
       houseState_.clean(robotState_.getPosition());
-    } else {
       robotState_.step(currentStep);
     }
     steps++;
+    std::cout << currentStep << std::endl;
   }
 }

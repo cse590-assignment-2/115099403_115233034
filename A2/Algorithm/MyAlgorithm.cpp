@@ -84,10 +84,9 @@ Step MyAlgorithm::work() {
  * 1. handle total dirt
  */
 Step MyAlgorithm::nextStep() {
-  // @todo : write finish condition
-  // if (total_dirt == 0 && unexplored_points_.size() == 0 &&
-  //     current_position_ == DOCK_POS)
-  //   state_ == AlgoState::FINISH;
+  if (house_manager_.isUnexploredEmpty() && house_manager_.total_dirt() == 0 &&
+      current_position_ == DOCK_POS)
+    state_ = AlgoState::FINISH;
 
   if (state_ == AlgoState::FINISH) {
     return Step::Finish;
@@ -117,7 +116,7 @@ Step MyAlgorithm::nextStep() {
                                              : AlgoState::WORKING;
     return static_cast<Step>(dir);
   } else {
-    if (needCharge()) {
+    if (needCharge() || house_manager_.total_dirt() == 0) {
       state_ = AlgoState::TO_DOCK;
       // populate stack
       stack_ = house_manager_.getShortestPath(current_position_, DOCK_POS);

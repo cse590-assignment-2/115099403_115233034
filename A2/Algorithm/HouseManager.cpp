@@ -5,7 +5,7 @@
 #include <queue>
 #include <vector>
 
-HouseManager::HouseManager() {}
+HouseManager::HouseManager() : total_dirt_(0) {}
 
 bool HouseManager::exists(const Pos pos) const {
   return percieved_house_.count(pos) != 0;
@@ -19,8 +19,13 @@ int HouseManager::dirt(const Pos pos) {
   return -2; // @todo errorcodes.h for algo
 }
 
-void HouseManager::setDirt(const Pos pos, int level) {
-  percieved_house_[pos] = level;
+void HouseManager::setDirt(const Pos pos, int dirtlevel) {
+  if (/* percieved_house_.count(pos) != 0 && */ percieved_house_[pos] > 0 &&
+      percieved_house_[pos] <= MAX_DIRT)
+    total_dirt_ -= percieved_house_[pos];
+
+  percieved_house_[pos] = dirtlevel;
+  total_dirt_ += dirtlevel;
 }
 
 bool HouseManager::isWall(const Pos pos) {
@@ -35,8 +40,11 @@ void HouseManager::clean(const Pos pos) {
   if (percieved_house_[pos] > 0 && percieved_house_[pos] <= MAX_DIRT) {
     // clean pos
     percieved_house_[pos]--;
+    total_dirt_--;
   }
 }
+
+bool HouseManager::isUnexploredEmpty() { return unexplored_points_.empty(); }
 
 bool HouseManager::checkUnexplored(const Pos pos) {
   return unexplored_points_.count(pos) != 0;
@@ -64,7 +72,12 @@ void HouseManager::updateNeighbor(Direction dir, Pos position, bool isWall) {
  * @param dirt value to be updated
  */
 void HouseManager::clean(const Pos pos, int dirt) {
+  if (/* percieved_house_.count(pos) != 0 && */ percieved_house_[pos] > 0 &&
+      percieved_house_[pos] <= MAX_DIRT)
+    total_dirt_ -= percieved_house_[pos];
+
   percieved_house_[pos] = dirt;
+  total_dirt_ += dirt;
 
   clean(pos);
 }

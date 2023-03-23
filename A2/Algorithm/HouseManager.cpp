@@ -52,7 +52,7 @@ bool HouseManager::checkUnexplored(const Pos pos) {
 
 void HouseManager::eraseUnexplored(const Pos pos) {
   if (checkUnexplored(pos))
-    eraseUnexplored(pos);
+    unexplored_points_.erase(pos);
 }
 
 void HouseManager::updateNeighbor(Direction dir, Pos position, bool isWall) {

@@ -48,6 +48,7 @@ bool MyAlgorithm::needCharge() {
 Step MyAlgorithm::work() {
   // Assuming current_pos exists in percieved
   // priority to cleaning
+  std::cout << __FUNCTION__ << std::endl;
   if (house_manager_.dirt(current_position_) > 0)
     return Step::Stay;
 
@@ -58,6 +59,7 @@ Step MyAlgorithm::work() {
   for (auto d : dirPriority()) {
     auto point = getPosition(current_position_, d);
     if (house_manager_.checkUnexplored(point)) {
+      current_position_ = getPosition(current_position_, d);
       return static_cast<Step>(d);
     } else if (house_manager_.exists(point) && house_manager_.dirt(point) > 0) {
       if (max_dirt < house_manager_.dirt(point)) {
@@ -70,6 +72,7 @@ Step MyAlgorithm::work() {
     }
   }
   if (max_dirt > 0) {
+    current_position_ = getPosition(current_position_, dir);
     return static_cast<Step>(dir);
   }
   // BFS ALGORITHM
@@ -78,6 +81,7 @@ Step MyAlgorithm::work() {
   stack_ = house_manager_.getShortestPath(current_position_, {}, true);
   dir = stack_.top();
   stack_.pop();
+  current_position_ = getPosition(current_position_, dir);
   return static_cast<Step>(dir);
 }
 
@@ -86,6 +90,9 @@ Step MyAlgorithm::work() {
  * 1. handle total dirt
  */
 Step MyAlgorithm::nextStep() {
+  std::cout << __FUNCTION__ << " currentpos: " << current_position_.first << " "
+            << current_position_.second << std::endl;
+
   if (house_manager_.isUnexploredEmpty() && house_manager_.total_dirt() == 0 &&
       current_position_ == DOCK_POS)
     state_ = AlgoState::FINISH;

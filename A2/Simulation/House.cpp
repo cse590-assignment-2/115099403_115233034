@@ -47,6 +47,9 @@ int House::dirtLevel(const Position &position) const {
 }
 
 bool House::isWall(const Position &position) const {
+  std::cout << __FUNCTION__ << " " << position.r << ", " << position.c << " "
+            << (data_[position.r][position.c] == int(LocType::Wall))
+            << std::endl;
   return data_[position.r][position.c] == int(LocType::Wall);
 }
 

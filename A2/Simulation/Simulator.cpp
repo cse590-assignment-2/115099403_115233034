@@ -90,8 +90,9 @@ int Simulator::readHouseFile(const std::string &houseFilePath) {
 void Simulator::run() {
   // TODO : Implement run() using the following function
   int steps = 1;
-  bool stop = false;
+  bool stop = false, error = true;
   while (steps <= max_steps_) {
+    error = false;
     Step currentStep = algo->nextStep();
     if (currentStep == Step::Finish)
       break;
@@ -99,7 +100,9 @@ void Simulator::run() {
       if (currentStep != Step::Stay &&
           wall_sensor_.isWall(static_cast<Direction>(currentStep))) {
         std::cout << "Running into a wall : unexpected operation";
-      } else {
+        error = true;
+      }
+      if (!error) {
         houseState_.clean(robotState_.getPosition());
         robotState_.step(currentStep);
       }

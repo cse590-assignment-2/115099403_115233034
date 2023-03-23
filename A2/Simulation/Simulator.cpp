@@ -89,5 +89,17 @@ int Simulator::readHouseFile(const std::string &houseFilePath) {
 
 void Simulator::run() {
   // TODO : Implement run() using the following function
-  algo->nextStep();
+  int steps = 1;
+  bool stop = false;
+  while (steps <= max_steps_) {
+    Step currentStep = algo->nextStep();
+    if (currentStep == Step::Finish)
+      break;
+    else if (currentStep == Step::Stay) {
+      houseState_.clean(robotState_.getPosition());
+    } else {
+      robotState_.step(currentStep);
+    }
+    steps++;
+  }
 }

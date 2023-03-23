@@ -1,5 +1,14 @@
 #include "House.h"
-
+int House::clean(const Position &position) {
+  if (position.r >= data_.size() || position.c >= data_[0].size())
+    return -1;
+  int &dirt = data_[position.r][position.c];
+  if (dirt == static_cast<int>(LocType::Wall))
+    return -1;
+  if (dirt > 0)
+    dirt--;
+  return 1;
+}
 void House::init(std::vector<std::vector<int>> &data) {
 
   data_.resize(data.size() + 2);

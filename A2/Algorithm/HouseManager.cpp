@@ -97,11 +97,11 @@ std::stack<Direction> HouseManager::getShortestPath(std::pair<int, int> src,
                                                     bool search) {
   std::stack<Direction> path;
 
-  std::queue<Pos> st; // stack for DFS traversal
+  std::queue<Pos> q; // stack for DFS traversal
   std::map<Pos, bool> visited;
   std::map<Pos, Pos> parent;
 
-  st.push(src);
+  q.push(src);
   visited[src] = true;
 
   bool found = false;
@@ -115,12 +115,12 @@ std::stack<Direction> HouseManager::getShortestPath(std::pair<int, int> src,
    *
    *  ** for A2 we can implement best path on given depth
    */
-  while (!st.empty()) {
-    auto t = st.front();
-    st.pop();
+  while (!q.empty()) {
+    auto t = q.front();
+    q.pop();
     for (std::pair<int, int> v : neighbors(t)) {
       if (!visited[v]) {
-        st.push(v);
+        q.push(v);
         visited[v] = true;
         parent[v] = t;
       }

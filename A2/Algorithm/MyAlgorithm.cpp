@@ -37,8 +37,10 @@ void MyAlgorithm::updateNeighbors() {
 }
 
 bool MyAlgorithm::needCharge() {
+  if (current_position_ == DOCK_POS)
+    return false;
   auto st = house_manager_.getShortestPath(current_position_, DOCK_POS);
-  if (st.size() + BATTERY_BUFF < battery_meter_->getBatteryState())
+  if (st.size() + BATTERY_BUFF > battery_meter_->getBatteryState())
     return true;
   return false;
 }

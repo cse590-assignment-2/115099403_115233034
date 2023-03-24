@@ -31,6 +31,7 @@ struct Position {
       return {r, c};
     }
   }
+  bool operator==(const Position &p) { return (r == p.r && c == p.c); }
 };
 
 std::ostream &operator<<(std::ostream &out, const Position &pos);

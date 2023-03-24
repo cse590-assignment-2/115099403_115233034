@@ -110,7 +110,11 @@ void Simulator::run() {
       }
       if (!error) {
         houseState_.clean(robotState_.getPosition());
-        robotState_.step(currentStep);
+        if (currentStep == Step::Stay &&
+            robotState_.getPosition() == houseState_.getDockPos())
+          robotState_.charge();
+        else
+          robotState_.step(currentStep);
       }
     }
     steps++;

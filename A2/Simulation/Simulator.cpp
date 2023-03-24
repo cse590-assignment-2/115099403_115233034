@@ -94,6 +94,10 @@ void Simulator::run() {
   int steps = 1;
   bool stop = false, error = true;
   while (steps <= max_steps_) {
+    std::cout << "Simulator::step " << steps << " pos "
+              << robotState_.getPosition()
+              << " Battery: " << battery_meter_.getBatteryState()
+              << " Dirt: " << dirt_sensor_.dirtLevel() << std::endl;
     error = false;
     Step currentStep = algo->nextStep();
     if (currentStep == Step::Finish)

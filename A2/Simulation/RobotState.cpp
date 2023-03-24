@@ -15,7 +15,7 @@ double RobotState::maxBattery() const { return max_battery_; }
 double RobotState::battery() const { return battery_; }
 
 void RobotState::step(Step stepDiretion) {
-  if (battery_ && stepDiretion == Step::Stay)
+  if (battery_)
     battery_--;
   else
     return; // TODO: handle error scenario

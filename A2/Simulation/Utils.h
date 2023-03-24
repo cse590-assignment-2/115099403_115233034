@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Common/common_types.h"
-
+#define MAX_STEPS_CHARGE 20
 #include <iostream>
 #include <string>
 
@@ -39,3 +39,4 @@ std::ostream &operator<<(std::ostream &out, const Step &step);
 
 Direction reverse(const Direction &d);
 Step reverse(Step s);
+std::string str(const Step &step);

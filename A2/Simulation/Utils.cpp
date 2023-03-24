@@ -69,29 +69,29 @@ Step reverse(Step s) {
     return Step::Stay;
   }
 }
-
 std::ostream &operator<<(std::ostream &out, const Step &step) {
-  std::string outString = "";
+  out << str(step);
+  return out;
+}
+std::string str(const Step &step) {
   switch (step) {
   case Step::North:
-    outString = "North";
+    return "North";
     break;
   case Step::South:
-    outString = "South";
+    return "South";
     break;
   case Step::East:
-    outString = "East";
+    return "East";
     break;
   case Step::West:
-    outString = "West";
+    return "West";
     break;
   case Step::Stay:
-    outString = "Stay";
+    return "stay";
     break;
   case Step::Finish:
-    outString = "Finish";
+    return "Finish";
     break;
   }
-  out << outString;
-  return out;
 }

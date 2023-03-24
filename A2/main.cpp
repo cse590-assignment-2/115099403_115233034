@@ -10,4 +10,5 @@ int main(int argc, char **argv) {
   MyAlgorithm algo;
   simulator.setAlgorithm(algo);
   simulator.run();
+  simulator.dump("output.txt");
 }

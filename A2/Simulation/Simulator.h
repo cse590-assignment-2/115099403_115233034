@@ -18,9 +18,11 @@
 class Simulator {
 private:
   std::size_t max_steps_;
+  std::size_t steps_ = 0;
+  std::string final_state_ = "";
   House houseState_;
   RobotState robotState_;
-
+  std::string stepList;
   AbstractAlgorithm *algo;
   // sensors
   DirtSensorImpl dirt_sensor_;
@@ -34,4 +36,5 @@ public:
   int readHouseFile(const std::string &house_file_path);
   void setAlgorithm(AbstractAlgorithm &algorithm);
   void run();
+  void dump(std::string outFileName);
 };

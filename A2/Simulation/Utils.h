@@ -11,7 +11,7 @@
  */
 class Utils {
 public:
-  static double parseDouble(std::string input);
+  static double parseInt(std::string input);
   size_t readAEqb(std::string input, std::string varname);
 };
 

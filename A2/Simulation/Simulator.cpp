@@ -40,10 +40,10 @@ int Simulator::readHouseFile(const std::string &houseFilePath) {
             << num_rows_s << std::endl
             << num_cols_s << std::endl;
 
-  max_steps_ = Utils::parseDouble(max_steps_s);
-  int max_robot_battery_ = Utils::parseDouble(max_battery_s);
-  int n_rows_ = Utils::parseDouble(num_rows_s);
-  int n_cols_ = Utils::parseDouble(num_cols_s);
+  max_steps_ = Utils::parseInt(max_steps_s);
+  int max_robot_battery_ = Utils::parseInt(max_battery_s);
+  int n_rows_ = Utils::parseInt(num_rows_s);
+  int n_cols_ = Utils::parseInt(num_cols_s);
 
   std::cout << max_steps_ << std::endl
             << max_robot_battery_ << std::endl
@@ -76,8 +76,10 @@ int Simulator::readHouseFile(const std::string &houseFilePath) {
     }
     std::getline(myfile, line);
     row_number++;
+    if (row_number == n_rows_)
+      break;
   }
-
+  myfile.close();
   houseState_.init(data);
   robotState_.init(max_robot_battery_, houseState_.getDockPos());
   std::cout << "Robot: max_robot_battery:" << max_robot_battery_ << std::endl;

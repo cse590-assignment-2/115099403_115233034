@@ -14,4 +14,5 @@ enum class AlgoState {
   FINISH,
   EXPLORE,
   CLEANING
+
 };

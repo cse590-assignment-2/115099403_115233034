@@ -28,7 +28,7 @@ public:
   void clean(const Pos pos, int dirt);
 
   bool isUnexploredEmpty();
-  bool checkUnexplored(const Pos pos);
+  bool isUnexplored(const Pos pos);
   // check and erase
   void eraseUnexplored(const Pos pos);
 

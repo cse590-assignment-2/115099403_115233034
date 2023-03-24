@@ -8,7 +8,7 @@
 
 // config
 constexpr Pos DOCK_POS = {0, 0};
-constexpr int BATTERY_BUFF = 10; // can be percentage
+constexpr int BATTERY_BUFF = 2; // can be percentage
 // config end
 
 /**
@@ -52,3 +52,5 @@ Direction nextDir(const Direction &dir);
 std::vector<Direction> dirPriority();
 
 Direction getDirection(Pos src, Pos dst);
+
+std::ostream &operator<<(std::ostream &out, const AlgoState &step);

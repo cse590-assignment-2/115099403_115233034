@@ -1,4 +1,5 @@
 #include "House.h"
+
 int House::clean(const Position &position) {
   if (position.r >= data_.size() || position.c >= data_[0].size())
     return -1;
@@ -11,8 +12,8 @@ int House::clean(const Position &position) {
   }
   return 1;
 }
-void House::init(std::vector<std::vector<int>> &data) {
 
+void House::init(std::vector<std::vector<int>> &data) {
   data_.resize(data.size() + 2);
   for (int i = 0; i < data_.size(); i++)
     data_[i].resize(data[0].size() + 2, 0);
@@ -51,9 +52,9 @@ int House::dirtLevel(const Position &position) const {
 }
 
 bool House::isWall(const Position &position) const {
-  std::cout << __FUNCTION__ << " " << position.r << ", " << position.c << " "
-            << (data_[position.r][position.c] == int(LocType::Wall))
-            << std::endl;
+  // std::cout << __FUNCTION__ << " " << position.r << ", " << position.c << " "
+  //           << (data_[position.r][position.c] == int(LocType::Wall))
+  //           << std::endl;
   return data_[position.r][position.c] == int(LocType::Wall);
 }
 

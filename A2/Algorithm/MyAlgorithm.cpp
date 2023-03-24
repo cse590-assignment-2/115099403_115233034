@@ -5,7 +5,7 @@
 #include <queue>
 
 MyAlgorithm::MyAlgorithm()
-    : house_manager_(), current_position_(DOCK_POS),
+    : steps_(0), house_manager_(), current_position_(DOCK_POS),
       state_(AlgoState::CHARGING) {
   house_manager_.setDirt(current_position_, int(LocType::Dock));
 }
@@ -40,6 +40,7 @@ bool MyAlgorithm::needCharge() {
   if (current_position_ == DOCK_POS)
     return false;
   auto st = house_manager_.getShortestPath(current_position_, DOCK_POS);
+  std::cout << __FUNCTION__ << " st.size " << st.size() << std::endl;
   if (st.size() + BATTERY_BUFF > battery_meter_->getBatteryState())
     return true;
   return false;
@@ -58,7 +59,9 @@ Step MyAlgorithm::work() {
   // due to updateNeighbors()
   for (auto d : dirPriority()) {
     auto point = getPosition(current_position_, d);
-    if (house_manager_.checkUnexplored(point)) {
+    if (house_manager_.isUnexplored(point)) {
+      if (steps_ > 10)
+        std::cout << "Unexplored found \n";
       current_position_ = getPosition(current_position_, d);
       return static_cast<Step>(d);
     } else if (house_manager_.exists(point) && house_manager_.dirt(point) > 0) {
@@ -90,11 +93,15 @@ Step MyAlgorithm::work() {
  * 1. handle total dirt
  */
 Step MyAlgorithm::nextStep() {
-  std::cout << __FUNCTION__ << " currentpos: " << current_position_.first << " "
-            << current_position_.second << std::endl;
+  steps_++;
+  std::cout << __PRETTY_FUNCTION__ << " currentpos: " << current_position_.first
+            << " " << current_position_.second
+            << " totaldirt: " << house_manager_.total_dirt() << " " << state_
+            << " unexplored " << house_manager_.isUnexploredEmpty()
+            << std::endl;
 
-  if (house_manager_.isUnexploredEmpty() && house_manager_.total_dirt() == 0 &&
-      current_position_ == DOCK_POS)
+  if (steps_ != 1 && house_manager_.isUnexploredEmpty() &&
+      house_manager_.total_dirt() == 0 && current_position_ == DOCK_POS)
     state_ = AlgoState::FINISH;
 
   if (state_ == AlgoState::FINISH) {
@@ -107,6 +114,7 @@ Step MyAlgorithm::nextStep() {
   house_manager_.clean(current_position_, dirt_sensor_->dirtLevel());
 
   if (state_ == AlgoState::CHARGING) {
+    // std::cout << __FUNCTION__ << "CHARGING" << std::endl;
     if (battery_meter_->getBatteryState() != max_battery_) {
       return Step::Stay;
     }
@@ -114,6 +122,7 @@ Step MyAlgorithm::nextStep() {
   }
 
   if (state_ == AlgoState::TO_DOCK || state_ == AlgoState::TO_POS) {
+    // std::cout << __FUNCTION__ << "TO_DOCK/POS" << std::endl;
     auto dir = stack_.top();
     stack_.pop();
     // @todo check for correctness
@@ -125,7 +134,10 @@ Step MyAlgorithm::nextStep() {
                                              : AlgoState::WORKING;
     return static_cast<Step>(dir);
   } else {
-    if (needCharge() || house_manager_.total_dirt() == 0) {
+    // std::cout << __FUNCTION__ << "ELSE" << std::endl;
+    if (steps_ != 1 && (needCharge() || (house_manager_.isUnexploredEmpty() &&
+                                         house_manager_.total_dirt() == 0))) {
+      // std::cout << __FUNCTION__ << "NEED-CHARGE" << std::endl;
       state_ = AlgoState::TO_DOCK;
       // populate stack
       stack_ = house_manager_.getShortestPath(current_position_, DOCK_POS);

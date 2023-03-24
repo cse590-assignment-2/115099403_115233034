@@ -11,6 +11,7 @@
 
 class MyAlgorithm : public AbstractAlgorithm {
 private:
+  int steps_;
   std::size_t max_steps_;
   AlgoState state_;
   std::size_t max_battery_;

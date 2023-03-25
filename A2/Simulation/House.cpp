@@ -44,7 +44,9 @@ void House::init(std::vector<std::vector<int>> &data) {
 }
 
 Position House::getDockPos() const { return dock_pos_; }
+
 double House::totDirt() const { return total_dirt_; }
+
 int House::dirtLevel(const Position &position) const {
   return data_[position.r][position.c] == int(LocType::Dock)
              ? -1

@@ -1,7 +1,10 @@
 #pragma once
 
 #include "../Common/common_types.h"
+#include "ErrorCodes.h"
+
 #define MAX_STEPS_CHARGE 20
+
 #include <iostream>
 #include <string>
 
@@ -12,7 +15,7 @@
 class Utils {
 public:
   static double parseInt(std::string input);
-  size_t readAEqb(std::string input, std::string varname);
+  static size_t readAEqb(std::string input, std::string varname);
 };
 
 struct Position {
@@ -32,10 +35,12 @@ struct Position {
     }
   }
   bool operator==(const Position &p) { return (r == p.r && c == p.c); }
+  bool operator!=(const Position &p) { return !(*this == p); }
 };
 
 std::ostream &operator<<(std::ostream &out, const Position &pos);
 std::ostream &operator<<(std::ostream &out, const Step &step);
+std::ostream &operator<<(std::ostream &out, const FileReadError &error);
 
 Direction reverse(const Direction &d);
 Step reverse(Step s);

@@ -20,9 +20,9 @@ private:
   std::size_t max_steps_;
   std::size_t steps_ = 0;
   std::string final_state_ = "";
-  House houseState_;
-  RobotState robotState_;
-  std::string stepList;
+  House house_;
+  RobotState robot_state_;
+  std::vector<char> step_list_;
   AbstractAlgorithm *algo;
   // sensors
   DirtSensorImpl dirt_sensor_;

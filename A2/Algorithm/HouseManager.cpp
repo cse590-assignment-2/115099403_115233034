@@ -45,7 +45,7 @@ void HouseManager::clean(const Pos pos) {
 }
 
 bool HouseManager::isUnexploredEmpty() {
-  std::cout << " " << unexplored_points_.size() << " ";
+  // std::cout << " " << unexplored_points_.size() << " ";
   return unexplored_points_.empty();
 }
 

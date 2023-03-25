@@ -1,8 +1,11 @@
 #include "Simulator.h"
 
+#include "ErrorCodes.h"
+#include "Utils.h"
+
 Simulator::Simulator()
-    : robotState_(), dirt_sensor_(houseState_, robotState_),
-      wall_sensor_(houseState_, robotState_), battery_meter_(robotState_) {}
+    : robot_state_(), dirt_sensor_(house_, robot_state_),
+      wall_sensor_(house_, robot_state_), battery_meter_(robot_state_) {}
 
 void Simulator::setAlgorithm(AbstractAlgorithm &algorithm) {
 
@@ -24,15 +27,45 @@ int Simulator::readHouseFile(const std::string &houseFilePath) {
   if (!myfile.is_open()) {
     return -1;
   }
-
+  auto print_read_error = [=](auto e) {
+    std::cout << "ERROR!! While reading input file : " << FileReadError(e)
+              << std::endl;
+  };
   std::getline(myfile, house_name);
+
   std::getline(myfile, max_steps_s);
+  max_steps_ = Utils::readAEqb(max_steps_s, "MaxSteps");
+  if (max_steps_ < 0) {
+    print_read_error(max_steps_);
+    return max_steps_;
+  }
+  if (myfile.eof()) {
+    return -1;
+  }
   std::getline(myfile, max_battery_s);
+  int max_robot_battery_ = Utils::readAEqb(max_battery_s, "MaxBattery");
+  if (max_robot_battery_ < 0) {
+    print_read_error(max_robot_battery_);
+    return max_robot_battery_;
+  }
+  if (myfile.eof()) {
+    return -1;
+  }
   std::getline(myfile, num_rows_s);
-  std::getline(myfile, num_cols_s);
+  int n_rows_ = Utils::readAEqb(num_rows_s, "Rows");
+  if (n_rows_ < 0) {
+    print_read_error(n_rows_);
+    return n_rows_;
+  }
 
   if (myfile.eof()) {
     return -1;
+  }
+  std::getline(myfile, num_cols_s);
+  int n_cols_ = Utils::readAEqb(num_cols_s, "Cols");
+  if (n_cols_ < 0) {
+    print_read_error(n_cols_);
+    return n_cols_;
   }
 
   std::cout << max_steps_s << std::endl
@@ -40,10 +73,9 @@ int Simulator::readHouseFile(const std::string &houseFilePath) {
             << num_rows_s << std::endl
             << num_cols_s << std::endl;
 
-  max_steps_ = Utils::parseInt(max_steps_s);
-  int max_robot_battery_ = Utils::parseInt(max_battery_s);
-  int n_rows_ = Utils::parseInt(num_rows_s);
-  int n_cols_ = Utils::parseInt(num_cols_s);
+  if (myfile.eof()) {
+    return -1;
+  }
 
   std::cout << max_steps_ << std::endl
             << max_robot_battery_ << std::endl
@@ -69,8 +101,11 @@ int Simulator::readHouseFile(const std::string &houseFilePath) {
         dock_found = 1;
         data[row_number][col_number] = 100; // replace with LocType
       } else if (line[col_number] == 'D') {
+        std::cout << "ERROR!! Invalid House file More than one dock found!!"
+                  << std::endl;
         return -1;
       } else {
+        std::cout << "ERROR!! Invalid House data" << std::endl;
         return -1;
       }
     }
@@ -80,60 +115,73 @@ int Simulator::readHouseFile(const std::string &houseFilePath) {
       break;
   }
   myfile.close();
-  houseState_.init(data);
-  robotState_.init(max_robot_battery_, houseState_.getDockPos());
+  house_.init(data);
+  robot_state_.init(max_robot_battery_, house_.getDockPos());
   std::cout << "Robot: max_robot_battery:" << max_robot_battery_ << std::endl;
-  std::cout << "House:\n";
-  std::cout << houseState_;
+  std::cout << house_;
 
   return 1;
 }
 
 void Simulator::run() {
-  // TODO : Implement run() using the following function
-  int steps = 1;
   bool stop = false, error = true;
-  while (steps <= max_steps_) {
-    std::cout << "Simulator::step " << steps << " pos "
-              << robotState_.getPosition()
-              << " Battery: " << battery_meter_.getBatteryState()
-              << " Dirt: " << dirt_sensor_.dirtLevel() << std::endl;
+  final_state_ = "WORKING";
+  while (steps_ <= max_steps_) {
+    // std::cout << "Simulator::step " << steps_ << " pos "
+    //           << robot_state_.getPosition()
+    //           << " Battery: " << battery_meter_.getBatteryState()
+    //           << " Dirt: " << dirt_sensor_.dirtLevel() << std::endl;
     error = false;
     Step currentStep = algo->nextStep();
-    stepList += str(currentStep)[0];
+    /** DEAD case handle */
+    step_list_.push_back(str(currentStep)[0]);
     if (currentStep == Step::Finish) {
       final_state_ = "FINISHED";
       break;
     } else {
       if (currentStep != Step::Stay &&
           wall_sensor_.isWall(static_cast<Direction>(currentStep))) {
-        std::cout << "Running into a wall : unexpected operation";
+        std::cout << "ERROR!! Running into a wall : unexpected behaviour"
+                  << std::endl;
         error = true;
       }
       if (!error) {
-        houseState_.clean(robotState_.getPosition());
+        house_.clean(robot_state_.getPosition());
         if (currentStep == Step::Stay &&
-            robotState_.getPosition() == houseState_.getDockPos())
-          robotState_.charge();
-        else
-          robotState_.step(currentStep);
+            robot_state_.getPosition() == house_.getDockPos()) {
+          robot_state_.charge();
+        } else {
+          robot_state_.step(currentStep);
+        }
       }
     }
-    steps++;
-    std::cout << currentStep << " " << houseState_.totDirt() << std::endl;
+    if (robot_state_.battery() == 0 &&
+        robot_state_.getPosition() != house_.getDockPos()) {
+      final_state_ = "DEAD";
+      std::cout << "ERROR!! ROBOT REACHED DEAD STATE, STOPPING SIMULATOR"
+                << std::endl;
+      break;
+    }
+    steps_++;
+    // std::cout << currentStep << " " << house_.totDirt() << std::endl;
   }
-  steps_ = steps;
-  if (robotState_.battery() == 0)
-    final_state_ = "DEAD";
-  else
-    final_state_ = "WORKING";
+  // if (final_state_ == "FINISHED") {
+  //   if (robot_state_.battery() == 0 &&
+  //       robot_state_.getPosition() != house_.getDockPos())
+  //     final_state_ = "DEAD";
+  // } else {
+  //   final_state_ = "WORKING";
+  // }
+  std::cout << house_;
 }
 void Simulator::dump(std::string outputFileName) {
   std::ofstream myfile;
   myfile.open(outputFileName);
   myfile << "NumSteps = " << steps_ << std::endl;
-  myfile << "DirtLeft = " << houseState_.totDirt() << std::endl;
+  myfile << "DirtLeft = " << house_.totDirt() << std::endl;
   myfile << "Status = " << final_state_ << std::endl;
-  myfile << stepList << std::endl;
+  for (auto step : step_list_)
+    myfile << step;
+  myfile << std::endl;
   myfile.close();
 }

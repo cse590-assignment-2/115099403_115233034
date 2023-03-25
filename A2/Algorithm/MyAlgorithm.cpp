@@ -40,7 +40,7 @@ bool MyAlgorithm::needCharge() {
   if (current_position_ == DOCK_POS)
     return false;
   auto st = house_manager_.getShortestPath(current_position_, DOCK_POS);
-  std::cout << __FUNCTION__ << " st.size " << st.size() << std::endl;
+  // std::cout << __FUNCTION__ << " st.size " << st.size() << std::endl;
   if (st.size() + BATTERY_BUFF > battery_meter_->getBatteryState())
     return true;
   return false;
@@ -49,7 +49,7 @@ bool MyAlgorithm::needCharge() {
 Step MyAlgorithm::work() {
   // Assuming current_pos exists in percieved
   // priority to cleaning
-  std::cout << __FUNCTION__ << std::endl;
+  // std::cout << __FUNCTION__ << std::endl;
   if (house_manager_.dirt(current_position_) > 0)
     return Step::Stay;
 
@@ -60,8 +60,6 @@ Step MyAlgorithm::work() {
   for (auto d : dirPriority()) {
     auto point = getPosition(current_position_, d);
     if (house_manager_.isUnexplored(point)) {
-      if (steps_ > 10)
-        std::cout << "Unexplored found \n";
       current_position_ = getPosition(current_position_, d);
       return static_cast<Step>(d);
     } else if (house_manager_.exists(point) && house_manager_.dirt(point) > 0) {
@@ -82,6 +80,8 @@ Step MyAlgorithm::work() {
   state_ = AlgoState::TO_POS;
   // populate stack
   stack_ = house_manager_.getShortestPath(current_position_, {}, true);
+  if (stack_.size() * 2 > max_battery_)
+    return Step::Finish;
   dir = stack_.top();
   stack_.pop();
   current_position_ = getPosition(current_position_, dir);
@@ -93,12 +93,15 @@ Step MyAlgorithm::work() {
  * 1. handle total dirt
  */
 Step MyAlgorithm::nextStep() {
+  if (battery_meter_->getBatteryState() == 1 && steps_ == 0) // DEAD case
+    return Step::Finish;
   steps_++;
-  std::cout << __PRETTY_FUNCTION__ << " currentpos: " << current_position_.first
-            << " " << current_position_.second
-            << " totaldirt: " << house_manager_.total_dirt() << " " << state_
-            << " unexplored " << house_manager_.isUnexploredEmpty()
-            << std::endl;
+  // std::cout << __PRETTY_FUNCTION__ << " currentpos: " <<
+  // current_position_.first
+  //           << " " << current_position_.second
+  //           << " totaldirt: " << house_manager_.total_dirt() << " " << state_
+  //           << " unexplored " << house_manager_.isUnexploredEmpty()
+  //           << std::endl;
 
   if (steps_ != 1 && house_manager_.isUnexploredEmpty() &&
       house_manager_.total_dirt() == 0 && current_position_ == DOCK_POS)
@@ -121,33 +124,34 @@ Step MyAlgorithm::nextStep() {
     state_ = AlgoState::WORKING;
   }
 
-  if (state_ == AlgoState::TO_DOCK || state_ == AlgoState::TO_POS) {
+  if (steps_ != 1 && (needCharge() || (house_manager_.isUnexploredEmpty() &&
+                                       house_manager_.total_dirt() == 0))) {
+    // std::cout << __FUNCTION__ << "NEED-CHARGE" << std::endl;
+    state_ = AlgoState::TO_DOCK;
+    // populate stack
+    stack_ = house_manager_.getShortestPath(current_position_, DOCK_POS);
+    auto dir = stack_.top();
+    stack_.pop();
+    current_position_ = getPosition(current_position_, dir);
+    if (stack_.empty())
+      state_ = AlgoState::CHARGING;
+    return static_cast<Step>(dir);
+  } else if (state_ == AlgoState::TO_DOCK || state_ == AlgoState::TO_POS) {
     // std::cout << __FUNCTION__ << "TO_DOCK/POS" << std::endl;
+    // if (state_ == AlgoState::TO_POS && needCharge()) {
+    //   stack_ = std::stack<Direction>(); // clear stack
+    //   state_ = AlgoState::TO_DOCK;
+    // }
     auto dir = stack_.top();
     stack_.pop();
     // @todo check for correctness
     // if position is valid i.e unexplored or perceived
-    // if position is
     current_position_ = getPosition(current_position_, dir);
     if (stack_.empty())
       state_ = DOCK_POS == current_position_ ? AlgoState::CHARGING
                                              : AlgoState::WORKING;
     return static_cast<Step>(dir);
   } else {
-    // std::cout << __FUNCTION__ << "ELSE" << std::endl;
-    if (steps_ != 1 && (needCharge() || (house_manager_.isUnexploredEmpty() &&
-                                         house_manager_.total_dirt() == 0))) {
-      // std::cout << __FUNCTION__ << "NEED-CHARGE" << std::endl;
-      state_ = AlgoState::TO_DOCK;
-      // populate stack
-      stack_ = house_manager_.getShortestPath(current_position_, DOCK_POS);
-      auto dir = stack_.top();
-      stack_.pop();
-      current_position_ = getPosition(current_position_, dir);
-      if (stack_.empty())
-        state_ = AlgoState::CHARGING;
-      return static_cast<Step>(dir);
-    }
     return work();
   }
 }

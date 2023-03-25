@@ -3,11 +3,7 @@
 
 using std::string;
 
-double Utils::parseInt(string str) {
-  std::string input = str.substr(str.find('=') + 1);
-  if (input.empty())
-    return (size_t)FileReadError::Invalid;
-
+inline void lrtrim(string &input) {
   // ltrim
   input.erase(input.begin(),
               std::find_if(input.begin(), input.end(),
@@ -17,6 +13,14 @@ double Utils::parseInt(string str) {
                            [](unsigned char ch) { return !std::isspace(ch); })
                   .base(),
               input.end());
+}
+
+double Utils::parseInt(string input) {
+  // std::string input = input.substr(input.find('=') + 1);
+  if (input.empty())
+    return (size_t)FileReadError::Invalid;
+
+  lrtrim(input);
 
   try {
     return std::stoi(input);
@@ -26,15 +30,17 @@ double Utils::parseInt(string str) {
 }
 
 size_t Utils::readAEqb(string input, string varname) {
-  string valString = input.substr(input.find('=') + 1);
+  int idx = input.find('=');
+  if (idx == std::string::npos)
+    return (size_t)FileReadError::Invalid;
+  auto varstring = input.substr(0, idx);
 
-  // TODO:
-  // 1. check varname FileReadError::InvalidName;
-  // 2. check double  FileReadError::InvalidValue;
-  // 3. other scenarios
+  lrtrim(varstring);
+  if (varstring != varname)
+    return (size_t)FileReadError::InvalidName;
 
-  // handle val < 0 at caller
-  return parseInt(valString);
+  string valstring = input.substr(idx + 1);
+  return parseInt(valstring);
 }
 std::ostream &operator<<(std::ostream &out, const Position &pos) {
   out << "(" << pos.r << "," << pos.c << ")";
@@ -73,6 +79,24 @@ std::ostream &operator<<(std::ostream &out, const Step &step) {
   out << str(step);
   return out;
 }
+
+std::ostream &operator<<(std::ostream &out, const FileReadError &error) {
+  switch (error) {
+  case FileReadError::Invalid:
+    out << "FileReadError::Invalid";
+    break;
+  case FileReadError::InvalidName:
+    out << "FileReadError::InvalidName";
+    break;
+  case FileReadError::InvalidValue:
+    out << "FileReadError::InvalidValue";
+    break;
+  default:
+    break;
+  }
+  return out;
+}
+
 std::string str(const Step &step) {
   switch (step) {
   case Step::North:

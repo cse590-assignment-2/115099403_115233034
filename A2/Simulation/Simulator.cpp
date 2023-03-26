@@ -172,7 +172,7 @@ void Simulator::run() {
   // } else {
   //   final_state_ = "WORKING";
   // }
-  std::cout << house_;
+  std::cout << "After simulation " << house_;
 }
 void Simulator::dump(std::string outputFileName) {
   std::ofstream myfile;

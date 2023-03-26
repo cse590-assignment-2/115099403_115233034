@@ -1,5 +1,5 @@
 1-Small house
-MaxSteps = 20000
+MaxSteps = 290
 MaxBattery=20
 Rows = 4
 Cols =10

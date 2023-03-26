@@ -1,14 +1,8 @@
-2-unreachable room
-MaxSteps=10000
-MaxBattery = 1
-Rows= 10
-Cols=15
-WWWWWWWWWWWW
-W D        W
-W 123456789
-WWWWWWWWWWW
-012345678901
-012345678901
-01234W678901
-0123W5W78901
-01234W678901
+1-Small house
+MaxSteps = 200
+MaxBattery=20
+Rows = 3
+Cols =10
+WWWW
+W DWWW
+W 1W1W

@@ -3,4 +3,49 @@ project(A2)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(A2 main.cpp Common/common_types.h Common/WallsSensor.h Common/DirtSensor.h Common/BatteryMeter.h Common/AbstractAlgorithm.h Algorithm/MyAlgorithm.cpp Algorithm/MyAlgorithm.h Simulation/Simulator.h)
+# DO NOT TOUCH
+set(COMMON_INCLUDES 
+    ${PROJECT_SOURCE_DIR}/Common/common_types.h
+    ${PROJECT_SOURCE_DIR}/Common/AbstractAlgorithm.h
+    ${PROJECT_SOURCE_DIR}/Common/BatteryMeter.h
+    ${PROJECT_SOURCE_DIR}/Common/DirtSensor.h
+    ${PROJECT_SOURCE_DIR}/Common/WallsSensor.h)
+
+
+set(SIM_INCLUDES
+    ${PROJECT_SOURCE_DIR}/Simulation/BatteryMeterImpl.h
+    ${PROJECT_SOURCE_DIR}/Simulation/WallsSensorImpl.h
+    ${PROJECT_SOURCE_DIR}/Simulation/DirtSensorImpl.h
+    ${PROJECT_SOURCE_DIR}/Simulation/House.h
+    ${PROJECT_SOURCE_DIR}/Simulation/Utils.h
+    ${PROJECT_SOURCE_DIR}/Simulation/Simulator.h
+    ${PROJECT_SOURCE_DIR}/Simulation/RobotState.h
+    )
+
+set(ALGO_INCLUDES
+    ${PROJECT_SOURCE_DIR}/Algorithm/MyAlgorithm.h
+    ${PROJECT_SOURCE_DIR}/Algorithm/types.h
+    ${PROJECT_SOURCE_DIR}/Algorithm/Utils.h
+    ${PROJECT_SOURCE_DIR}/Algorithm/HouseManager.h
+    )
+
+add_library(sim SHARED 
+    ${PROJECT_SOURCE_DIR}/Simulation/BatteryMeterImpl.cpp
+    ${PROJECT_SOURCE_DIR}/Simulation/WallsSensorImpl.cpp
+    ${PROJECT_SOURCE_DIR}/Simulation/DirtSensorImpl.cpp
+    ${PROJECT_SOURCE_DIR}/Simulation/House.cpp
+    ${PROJECT_SOURCE_DIR}/Simulation/Simulator.cpp
+    ${PROJECT_SOURCE_DIR}/Simulation/RobotState.cpp
+    ${PROJECT_SOURCE_DIR}/Simulation/Utils.cpp
+    )
+target_include_directories(sim PUBLIC ${COMMON_INCLUDES} ${SIM_INCLUDES})
+
+add_executable( ${PROJECT_NAME} main.cpp 
+    ${PROJECT_SOURCE_DIR}/Algorithm/MyAlgorithm.cpp
+    ${PROJECT_SOURCE_DIR}/Algorithm/HouseManager.cpp
+    ${PROJECT_SOURCE_DIR}/Algorithm/Utils.cpp
+    )
+target_include_directories( ${PROJECT_NAME} 
+    PUBLIC ${COMMON_INCLUDES} ${SIM_INCLUDES} ${ALGO_INCLUDES})
+
+target_link_libraries( ${PROJECT_NAME} PUBLIC sim )

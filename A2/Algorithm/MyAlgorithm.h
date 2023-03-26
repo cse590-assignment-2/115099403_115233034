@@ -1,30 +1,54 @@
-//
-// Created by Anshuman Funkwal on 3/13/23.
-//
-
 #pragma once
 
-#include "../common/AbstractAlgorithm.h"
+#include "../Common/AbstractAlgorithm.h"
+#include "../Simulation/DirtSensorImpl.h"
+#include "HouseManager.h"
+#include "types.h"
 
-class MyAlgorithm: public AbstractAlgorithm{
-    std::size_t maxSteps;
-    const WallsSensor *WSensor = nullptr;
-    const DirtSensor *DSensor = nullptr;
-    const BatteryMeter *BMeter = nullptr;
+#include <map>
+#include <memory>
+#include <stack>
+
+class MyAlgorithm : public AbstractAlgorithm {
+private:
+  int steps_;
+  std::size_t max_steps_;
+  AlgoState state_;
+  std::size_t max_battery_;
+  std::pair<int, int> current_position_;
+
+  const WallsSensor *walls_sensor_ = nullptr;
+  const DirtSensor *dirt_sensor_ = nullptr;
+  const BatteryMeter *battery_meter_ = nullptr;
+
+  HouseManager house_manager_;
+
+  // point to dirt
+  // std::map<std::pair<int, int>, int> percieved_house_;
+  // std::map<std::pair<int, int>, bool> unexplored_points_;
+  std::stack<Direction> stack_;
+
+  // methods
+  void updateNeighbors();
+  // void updateNeighbor(Direction dir);
+  bool needCharge();
+  // void cleanCurrent();
+  Step work();
+
+  // std::stack<Direction> getShortestPath(std::pair<int, int> src,
+  //                                       std::pair<int, int> dst,
+  //                                       bool search = false);
+
+  // std::vector<std::pair<int, int>> neighbors(std::pair<int, int> point);
+
 public:
+  MyAlgorithm();
+  MyAlgorithm(AbstractAlgorithm &algorithm);
 
-    void setMaxSteps(std::size_t maxSteps) override {
-        this->maxSteps = maxSteps;
-    }
-    void setWallsSensor(const WallsSensor& wallsSensor) override {
-        this->WSensor = &wallsSensor;
-    }
-    void setDirtSensor(const DirtSensor& dirtSensor)  override {
-        this->DSensor = &dirtSensor;
-    }
-    void setBatteryMeter(const BatteryMeter& batteryMeter) override {
-        this->BMeter = &batteryMeter;
-    }
-    // TODO : Complete in cpp file
-    Step nextStep() override;
+  void setMaxSteps(std::size_t maxSteps) override;
+  void setWallsSensor(const WallsSensor &walls_sensor) override;
+  void setDirtSensor(const DirtSensor &dirt_sensor) override;
+  void setBatteryMeter(const BatteryMeter &battery_meter) override;
+  // TODO : Complete in cpp file
+  Step nextStep() override;
 };
